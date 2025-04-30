@@ -2,6 +2,13 @@
 
 <main>
     <h2>Calendario de Eventos</h2>
+    <!-- Controles de navegación -->
+    <div id="calendar-controls" style="text-align:center; margin-bottom:20px;">
+        <button id="prev-month" style="padding:10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:5px;">Mes Anterior</button>
+        <span id="current-month" style="font-size:18px; font-weight:bold;"></span>
+        <button id="next-month" style="padding:10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-left:5px;">Mes Siguiente</button>
+    </div>
+
     <!-- Contenedor principal del calendario -->
     <div id="calendar">
         <div class="days-header">

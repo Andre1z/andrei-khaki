@@ -1,8 +1,7 @@
 <?php
 include '../includes/db_config.php';
 
-// Consulta los eventos
-$query = "SELECT titulo AS title, fecha_inicio AS start FROM eventos";
+$query = "SELECT identificador, titulo AS title, descripcion AS description, fecha_inicio AS start, fecha_fin AS end FROM eventos";
 $resultado = $conexion->query($query);
 
 $events = [];

@@ -1,6 +1,6 @@
 <?php include 'includes/db_config.php'; ?>
 <?php include 'includes/header.php'; ?>
-<link rel="stylesheet" href="css/evento_form.css">
+<link rel="stylesheet" href="css/index.css">
 
 <main>
     <h2>Añadir o Editar Evento</h2>

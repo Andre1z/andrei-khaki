@@ -1,6 +1,14 @@
-<?php include '../includes/header.php'; ?>
 <link rel="stylesheet" href="../css/calendario.css">
-
+<link rel="stylesheet" href="../css/estilos.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario - Andrei Khaki</title>
+</head>
+<body>
+<header>
+    <h1>Calendario Personalizado</h1>
+</header>
 <main>
     <h2>Calendario de Eventos</h2>
     <div id="calendar-controls">

@@ -1,16 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
     const calendarGrid = document.querySelector('.days-grid');
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('modal-content');
+    const modalClose = document.getElementById('modal-close');
 
     // Función para generar un mes
     function generarCalendario(mes, anio) {
-        // Limpia el calendario
-        calendarGrid.innerHTML = '';
-
-        // Obtener el primer día del mes
+        calendarGrid.innerHTML = ''; // Limpia el calendario
         const primerDia = new Date(anio, mes, 1);
         const ultimoDia = new Date(anio, mes + 1, 0);
 
-        // Días previos para llenar la primera semana
         const primerDiaSemana = primerDia.getDay() === 0 ? 6 : primerDia.getDay() - 1;
         for (let i = 0; i < primerDiaSemana; i++) {
             const emptyDiv = document.createElement('div');
@@ -18,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function () {
             calendarGrid.appendChild(emptyDiv);
         }
 
-        // Días del mes
         for (let dia = 1; dia <= ultimoDia.getDate(); dia++) {
             const dayDiv = document.createElement('div');
             dayDiv.textContent = dia;
@@ -38,15 +36,31 @@ document.addEventListener('DOMContentLoaded', function () {
                 const eventDiv = document.createElement('div');
                 eventDiv.classList.add('event');
                 eventDiv.textContent = evento.title;
+                eventDiv.dataset.detalles = evento.description || "Sin descripción"; // Agregar detalles si existen
+                eventDiv.addEventListener('click', (e) => mostrarDetalles(evento)); // Vincular clic al evento
                 diaDiv.appendChild(eventDiv);
             }
         });
     }
 
-    // Generar calendario actual
+    // Función para mostrar detalles del evento en un modal
+    function mostrarDetalles(evento) {
+        modalContent.innerHTML = `
+            <h3>${evento.title}</h3>
+            <p>${evento.description || 'Sin descripción disponible'}</p>
+            <p><strong>Inicio:</strong> ${evento.start}</p>
+            <p><strong>Fin:</strong> ${evento.end || 'No especificado'}</p>
+        `;
+        modal.style.display = 'block';
+    }
+
+    // Cerrar el modal
+    modalClose.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    // Generar calendario y cargar eventos
     const hoy = new Date();
     generarCalendario(hoy.getMonth(), hoy.getFullYear());
-
-    // Cargar eventos
     cargarEventos();
 });

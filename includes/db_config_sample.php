@@ -1,8 +1,8 @@
 <?php
-$servidor = "localhost";
-$usuario = "calendario"; // Cambia esto según tus credenciales
-$contraseña = "Calendario.123$";
-$base_de_datos = "calendario";
+$servidor = "";
+$usuario = ""; // Cambia esto según tus credenciales
+$contraseña = "";
+$base_de_datos = "";
 
 $conexion = new mysqli($servidor, $usuario, $contraseña, $base_de_datos);
 

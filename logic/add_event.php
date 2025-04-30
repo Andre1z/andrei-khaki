@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fecha_inicio = $conexion->real_escape_string($_POST['fecha_inicio']);
     $fecha_fin = $conexion->real_escape_string($_POST['fecha_fin']);
 
-    if (isset($_POST['id']) && !empty($_POST['id'])) {
+    if (isset($_POST['identificador']) && !empty($_POST['id'])) {
         // Si hay un ID, actualizamos el evento existente
         $id = intval($_POST['identificador']);
         $query = "UPDATE eventos SET titulo='$titulo', descripcion='$descripcion', fecha_inicio='$fecha_inicio', fecha_fin='$fecha_fin' WHERE id=$id";

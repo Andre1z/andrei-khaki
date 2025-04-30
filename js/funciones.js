@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const modal = document.getElementById('modal');
     const modalContent = document.getElementById('modal-content');
     const modalClose = document.getElementById('modal-close');
+    const selectCategoria = document.getElementById('select-categoria'); // Filtro de categorías
     let mesActual = new Date().getMonth(); // Mes actual (0-11)
     let anioActual = new Date().getFullYear(); // Año actual
 
@@ -40,16 +41,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Función para cargar eventos desde la base de datos
-    async function cargarEventos() {
+    async function cargarEventos(filtroCategoria = null) {
         const response = await fetch('../logic/get_events.php');
         const eventos = await response.json();
 
         eventos.forEach(evento => {
+            // Filtrar por categoría si se aplica el filtro
+            if (filtroCategoria && evento.categoria !== filtroCategoria) return;
+
             const diaDiv = document.querySelector(`[data-fecha="${evento.start.split(' ')[0]}"]`);
             if (diaDiv) {
                 const eventDiv = document.createElement('div');
                 eventDiv.classList.add('event');
-                eventDiv.textContent = evento.title;
+                eventDiv.textContent = `${evento.title} (${evento.categoria})`;
                 eventDiv.dataset.detalles = evento.description || "Sin descripción"; // Detalles adicionales
                 eventDiv.addEventListener('click', () => mostrarDetalles(evento)); // Manejar clic para ver detalles
                 diaDiv.appendChild(eventDiv);
@@ -64,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <p>${evento.description || 'Sin descripción disponible'}</p>
             <p><strong>Inicio:</strong> ${evento.start}</p>
             <p><strong>Fin:</strong> ${evento.end || 'No especificado'}</p>
+            <p><strong>Categoría:</strong> ${evento.categoria}</p>
             <button id="edit-event" style="background:blue; color:white; padding:5px; margin-right:5px; cursor:pointer;">Editar</button>
             <button id="delete-event" style="background:red; color:white; padding:5px; cursor:pointer;">Eliminar</button>
         `;
@@ -87,18 +92,20 @@ document.addEventListener('DOMContentLoaded', function () {
             const fechaSeleccionada = e.target.dataset.fecha;
             const titulo = prompt('Introduce el título del evento:', 'Nuevo evento');
             const descripcion = prompt('Introduce una descripción:', 'Descripción del evento');
-            if (titulo && descripcion) {
-                guardarEvento(titulo, descripcion, fechaSeleccionada);
+            const categoria = prompt('Introduce la categoría del evento:', 'General');
+
+            if (titulo && descripcion && categoria) {
+                guardarEvento(titulo, descripcion, fechaSeleccionada, categoria);
             }
         }
     });
 
     // Función para guardar un nuevo evento en la base de datos
-    async function guardarEvento(titulo, descripcion, fecha) {
+    async function guardarEvento(titulo, descripcion, fecha, categoria) {
         const response = await fetch('../logic/add_event.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `titulo=${encodeURIComponent(titulo)}&descripcion=${encodeURIComponent(descripcion)}&fecha_inicio=${fecha}&fecha_fin=${fecha}`
+            body: `titulo=${encodeURIComponent(titulo)}&descripcion=${encodeURIComponent(descripcion)}&fecha_inicio=${fecha}&fecha_fin=${fecha}&categoria=${encodeURIComponent(categoria)}`
         });
 
         if (response.ok) {
@@ -115,12 +122,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const nuevaDescripcion = prompt('Editar descripción del evento:', evento.description || '');
         const nuevaFechaInicio = prompt('Editar fecha de inicio (YYYY-MM-DD HH:MM):', evento.start);
         const nuevaFechaFin = prompt('Editar fecha de fin (YYYY-MM-DD HH:MM):', evento.end || evento.start);
+        const nuevaCategoria = prompt('Editar categoría del evento:', evento.categoria);
 
-        if (nuevoTitulo && nuevaDescripcion && nuevaFechaInicio) {
+        if (nuevoTitulo && nuevaDescripcion && nuevaFechaInicio && nuevaCategoria) {
             const response = await fetch('../logic/edit_event.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `id=${evento.id}&titulo=${encodeURIComponent(nuevoTitulo)}&descripcion=${encodeURIComponent(nuevaDescripcion)}&fecha_inicio=${nuevaFechaInicio}&fecha_fin=${nuevaFechaFin}`
+                body: `id=${evento.id}&titulo=${encodeURIComponent(nuevoTitulo)}&descripcion=${encodeURIComponent(nuevaDescripcion)}&fecha_inicio=${nuevaFechaInicio}&fecha_fin=${nuevaFechaFin}&categoria=${encodeURIComponent(nuevaCategoria)}`
             });
 
             if (response.ok) {
@@ -160,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
             anioActual--;
         }
         generarCalendario(mesActual, anioActual);
-        cargarEventos();
+        cargarEventos(selectCategoria.value); // Recargar eventos del mes con filtro
         actualizarTituloMes();
     });
 
@@ -171,8 +179,14 @@ document.addEventListener('DOMContentLoaded', function () {
             anioActual++;
         }
         generarCalendario(mesActual, anioActual);
-        cargarEventos();
+        cargarEventos(selectCategoria.value); // Recargar eventos del mes con filtro
         actualizarTituloMes();
+    });
+
+    // Filtrar eventos por categoría
+    selectCategoria.addEventListener('change', () => {
+        generarCalendario(mesActual, anioActual); // Regenerar calendario
+        cargarEventos(selectCategoria.value); // Cargar eventos con filtro
     });
 
     // Inicializar el calendario

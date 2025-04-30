@@ -1,7 +1,7 @@
 <?php
 include '../includes/db_config.php';
 
-$query = "SELECT identificador, titulo AS title, descripcion AS description, fecha_inicio AS start, fecha_fin AS end FROM eventos";
+$query = "SELECT id, titulo AS title, descripcion AS description, fecha_inicio AS start, fecha_fin AS end, categoria FROM eventos";
 $resultado = $conexion->query($query);
 
 $events = [];
